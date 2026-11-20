@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Myroslav — Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@600&family=Instrument+Serif:ital@1&family=Playfair+Display:ital,wght@1,400&family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Pricing page for Myroslav AI Video, same system as the main site (near-black, ember accent, Anton /
+   Instrument Serif / Space Grotesk / JetBrains Mono; Cyrillic falls back to Oswald / Playfair, so
+   uk and ru get their own sizes and line heights).
+   Screens: 1 plans (3D cards that turn toward the cursor)  2 finished work  3 calculator
+   4 terms and add-ons (accordion)  5 contact. */
+:root{
+  --bg:#070708; --bg-2:#0f0f11; --bg-3:#16161a; --line:#26262c; --fg:#efeeea; --mute:#8f8d89;
+  --acc:#ff4d2e; --acc-2:#ff9a3d; --ink:#0b0b0d;
+  --display:'Anton','Oswald','Impact','Arial Narrow',sans-serif;
+  --serif:'Instrument Serif','Playfair Display',Georgia,'Times New Roman',serif;
+  --body:'Space Grotesk','Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --hl:1; /* heading line height; Cyrillic fallbacks are taller, so uk/ru raise it */
+  color-scheme:dark;
+}
+html[lang=uk],html[lang=ru]{--hl:1.14}
+*{box-sizing:border-box}
+html{overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;margin:0;-webkit-font-smoothing:antialiased;overflow-x:clip}
+#fx{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block}
+.glow{position:fixed;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;background:radial-gradient(circle,rgba(255,77,46,.13),transparent 62%);z-index:0;pointer-events:none;will-change:transform}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(7,7,8,.78) 100%)}
+main,nav,footer{position:relative;z-index:2}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:16px}
+@media(min-width:760px){.wrap{padding-inline:40px}}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;line-height:1.45}
+.acc{color:var(--acc)}
+.it{font-family:var(--serif);font-style:italic;font-weight:400;text-transform:none;letter-spacing:0}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--mute)}
+.eyebrow::before{content:"";flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+h1,h2{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.005em;text-wrap:balance;margin:10px 0 0;line-height:var(--hl);overflow-wrap:break-word}
+h1,h2{font-size:clamp(36px,5vw,80px)}
+html[lang=uk] h1,html[lang=ru] h1,html[lang=uk] h2,html[lang=ru] h2{font-size:clamp(30px,4.1vw,64px)}
+section{padding-block:clamp(52px,6.5vw,96px)}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 40px;margin-bottom:clamp(22px,2.8vw,36px)}
+.sec-head>div{min-width:0}
+.sec-head p{max-width:30em;color:var(--mute);margin:0;font-size:17px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:999px;font-weight:700;line-height:1.2;text-align:center;text-decoration:none;border:1px solid rgba(255,255,255,.14);background:rgba(15,15,17,.6);color:var(--fg);cursor:pointer;transition:transform .14s var(--ease),filter .2s,background .25s,border-color .25s,color .25s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:var(--ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{padding:9px 16px;font-size:14.5px;white-space:nowrap}
+[data-r]{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+[data-r].in{opacity:1;transform:none}
+
+/* nav */
+nav{position:fixed;left:0;right:0;top:14px;z-index:50;pointer-events:none}
+.pill{pointer-events:auto;margin:0 auto;width:min(calc(100% - 24px),900px);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 18px;border-radius:999px;background:rgba(15,15,17,.72);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+.logo{font-family:var(--display);font-size:22px;line-height:1;text-decoration:none;letter-spacing:.02em}
+.logo span{color:var(--acc)}
+.pill ul{display:flex;gap:2px;list-style:none;margin:0;padding:0}
+.pill ul a{display:block;text-decoration:none;color:var(--mute);padding:8px 11px;border-radius:999px;font-size:14.5px;white-space:nowrap;transition:color .2s,background .2s}
+.pill ul a:hover{color:var(--fg);background:rgba(255,255,255,.07)}
+@media(max-width:900px){.pill ul{display:none}}
+.langs{display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.langs button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:6px 9px;border-radius:999px;border:0;background:transparent;color:var(--mute);cursor:pointer;transition:background .2s,color .2s}
+.langs button:hover{color:var(--fg)}
+.langs button[aria-pressed="true"]{background:var(--fg);color:var(--ink)}
+.navr{display:flex;align-items:center;gap:8px}
+@media(max-width:520px){.navr .btn{display:none}.logo{font-size:19px}.pill{padding-left:14px}}
+
+/* screen 1: plans */
+.hero{min-height:100svh;padding-block:92px 28px;display:flex;flex-direction:column;justify-content:center}
+.hero-top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px 40px;margin-bottom:clamp(16px,2.4vh,28px)}
+.hero-top>div{min-width:0}
+.lead{font-size:clamp(15px,1.15vw,17.5px);color:var(--mute);max-width:30em;margin:0}
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
+.pslot{opacity:0;transform:translateY(40px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s);display:flex}
+.pslot.in{opacity:1;transform:none}
+/* The card: JS writes --rx/--ry (it turns toward the cursor wherever the cursor is) and --h (0..1 hover). */
+.plan{position:relative;flex:1;display:flex;border-radius:26px;padding:1px;transform-style:preserve-3d;will-change:transform;
+  transform:perspective(1100px) rotateX(calc(var(--rx,0)*1deg)) rotateY(calc(var(--ry,0)*1deg)) translateY(calc(var(--h,0)*-10px)) scale(calc(1 + var(--h,0)*.035));
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%),rgba(255,77,46,calc(var(--h,0)*.95)),transparent 60%),var(--line);
+  box-shadow:0 calc(30px + var(--h,0)*40px) calc(60px + var(--h,0)*70px) -40px rgba(255,77,46,calc(.12 + var(--h,0)*.55))}
+.plan.feat{background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%),rgba(255,214,170,calc(var(--h,0)*.9)),transparent 60%),conic-gradient(from var(--ang,0deg),var(--acc),#3a1810 25%,var(--acc-2) 50%,#3a1810 75%,var(--acc));animation:ang 5s linear infinite}
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes ang{to{--ang:360deg}}
+.plan-in{position:relative;flex:1;min-width:0;border-radius:25px;padding:clamp(18px,1.9vw,28px);background:radial-gradient(circle at 85% 0%,rgba(255,77,46,.14),transparent 50%),linear-gradient(160deg,#141417,#0b0b0d);display:flex;flex-direction:column;transform-style:preserve-3d}
+.plan.feat .plan-in{background:radial-gradient(circle at 85% 0%,rgba(255,77,46,.34),transparent 55%),linear-gradient(160deg,#1c1513,#0b0b0d)}
+/* light sweep across the card on hover */
+.plan-in::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.1) 50%,transparent 58%) no-repeat;background-size:260% 100%;background-position:130% 0;transition:background-position 0s}
+.plan.hov .plan-in::after{background-position:-60% 0;transition:background-position .9s var(--ease)}
+.plan .tag{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--mute);min-height:26px;transform:translateZ(18px)}
+.plan .tag b{background:var(--acc);color:var(--ink);border-radius:999px;padding:4px 10px;font-weight:600;text-align:right}
+.plan h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(24px,2.3vw,36px);line-height:1.05;margin:clamp(8px,1.2vh,14px) 0 0;transform:translateZ(26px)}
+.price{font-family:var(--display);font-size:clamp(60px,min(7.4vw,13.5vh),118px);line-height:1;margin-top:clamp(4px,.8vh,10px);display:flex;align-items:baseline;gap:.08em;flex-wrap:wrap;transform:translateZ(44px);transition:text-shadow .5s,color .5s}
+.price em{font-family:var(--serif);font-style:italic;color:var(--acc);font-size:.5em;line-height:1;margin-left:.12em}
+.plan.hov .price{text-shadow:0 0 44px rgba(255,77,46,.65)}
+.per{color:var(--mute);margin-top:2px;transform:translateZ(26px)}
+.plan .one{margin:clamp(10px,1.6vh,18px) 0 0;color:#d2d0cb;transform:translateZ(20px)}
+.plan ul{list-style:none;margin:clamp(10px,1.6vh,18px) 0 0;padding:clamp(10px,1.6vh,18px) 0 0;border-top:1px solid var(--line);display:grid;gap:clamp(5px,.9vh,10px);color:#cfcdc8;font-size:15px;transform:translateZ(20px)}
+.plan li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:8px;transition:transform .5s var(--ease),color .3s}
+.plan li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc);margin-top:8px;box-shadow:0 0 10px var(--acc);transition:transform .5s var(--ease)}
+.plan.hov li{transform:translateX(6px);color:var(--fg)}
+.plan.hov li:nth-child(2){transition-delay:.06s}
+.plan.hov li:nth-child(3){transition-delay:.12s}
+.plan.hov li::before{transform:scale(1.7)}
+.plan .btn{margin-top:auto;transform:translateZ(40px);width:100%}
+.plan .btn-gap{flex:1;min-height:clamp(12px,2vh,22px)}
+.plan .btn i{font-style:normal;display:inline-block;transition:transform .45s var(--ease)}
+.plan.hov .btn i{transform:translateX(7px)}
+.plan.hov .btn:not(.primary){background:var(--fg);border-color:var(--fg);color:var(--ink)}
+.hero-foot{padding-top:clamp(14px,2.2vh,24px);display:flex;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;color:var(--mute)}
+.hero-foot a{text-decoration:none;color:var(--fg)}
+/* short laptop screens: keep all three cards and their buttons above the fold */
+@media(min-width:981px) and (max-height:800px){
+  .hero{padding-block:78px 14px}
+  .hero-top{margin-bottom:12px}
+  .hero h1{font-size:clamp(30px,3.6vw,52px)}
+  html[lang=uk] .hero h1,html[lang=ru] .hero h1{font-size:clamp(28px,3.2vw,46px)}
+  .plan-in{padding:16px 20px}
+  .plan ul,.plan .one{font-size:14px;line-height:1.4}
+  .plan .btn{padding:10px 18px}
+  .price{font-size:clamp(54px,min(6.4vw,11.5vh),100px)}
+}
+@media(max-width:980px){
+  .hero{min-height:0;padding-top:96px}
+  .plans{grid-template-columns:1fr;max-width:560px;margin-inline:auto;width:100%}
+  .price{font-size:clamp(72px,22vw,110px)}
+}
+
+/* screen 2: work */
+.strip{display:flex;gap:16px;overflow-x:auto;padding:10px max(16px,calc((100vw - 1320px)/2 + 40px)) 26px;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#3a3936 transparent;cursor:grab}
+.strip.drag{cursor:grabbing;scroll-snap-type:none}
+.clip{position:relative;flex:0 0 auto;height:min(56vh,480px);aspect-ratio:9/16;border-radius:20px;overflow:hidden;background:#101013;border:1px solid rgba(255,255,255,.12);padding:0;cursor:pointer;scroll-snap-align:center;transition:transform .6s var(--ease),border-color .3s,box-shadow .4s}
+.clip.w16{aspect-ratio:16/9}
+.clip:hover{transform:translateY(-6px);border-color:rgba(255,77,46,.7);box-shadow:0 50px 120px -40px rgba(255,77,46,.6)}
+.clip video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.clip .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,7,8,.55),transparent 22%,transparent 62%,rgba(7,7,8,.9))}
+.clip .tg{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);background:rgba(7,7,8,.65);padding:6px 10px;border-radius:6px;text-align:left}
+.clip .tg i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc);margin-right:7px;animation:blink 1.3s infinite}
+.clip .cp{position:absolute;left:14px;right:14px;bottom:12px;text-align:left;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.clip .cp b{font-size:18px;line-height:1.2;min-width:0}
+.clip .cp span{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--acc);color:var(--ink);display:grid;place-items:center;font-size:14px}
+@keyframes blink{50%{opacity:.25}}
+@media(max-width:700px){.clip{height:min(56vh,420px)}.clip.w16{height:auto;width:86vw}}
+.nda{color:var(--mute);margin:0}
+#work .more+.wrap .nda{margin-top:clamp(40px,5vw,64px)}
+.nda b{color:var(--fg);font-weight:500}
+
+/* screen 3: calculator */
+.calc{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);border:1px solid var(--line);border-radius:26px;overflow:hidden;background:rgba(12,12,14,.9)}
+.calc-l{padding:clamp(18px,2.6vw,36px);display:grid;gap:24px;align-content:start;min-width:0}
+.calc-r{padding:clamp(18px,2.6vw,36px);background:var(--acc);color:var(--ink);display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;overflow:hidden;min-width:0}
+.calc-r::before{content:"";position:absolute;right:-140px;top:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,120,.55),transparent 65%);pointer-events:none}
+.calc-r>*{position:relative}
+.flabel{display:flex;justify-content:space-between;align-items:baseline;gap:10px;color:var(--mute);margin-bottom:10px}
+.flabel .val{font-family:var(--display);font-size:32px;line-height:1;color:var(--fg);letter-spacing:.01em;text-transform:none;white-space:nowrap}
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:5px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.seg button{padding:11px 4px;border-radius:13px;border:0;background:transparent;cursor:pointer;color:var(--mute);font-weight:700;font-size:15px;line-height:1.2;min-width:0;overflow-wrap:anywhere;transition:background .3s,color .3s}
+.seg button:hover{color:var(--fg)}
+.seg button small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.05em;margin-top:3px;opacity:.8}
+.seg button[aria-pressed=true]{background:var(--fg);color:var(--ink)}
+@media(max-width:420px){.seg button{font-size:13px}}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;cursor:pointer;margin:0;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--acc) 0 var(--f,5%),#2a2a30 var(--f,5%) 100%)}
+input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:#2a2a30}
+input[type=range]::-moz-range-progress{height:6px;border-radius:6px;background:var(--acc)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--fg);border:7px solid var(--acc);margin-top:-11px;box-shadow:0 0 22px rgba(255,77,46,.8)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--fg);border:7px solid var(--acc);box-shadow:0 0 22px rgba(255,77,46,.8)}
+.rng-s{display:flex;justify-content:space-between;color:#6a6864;margin-top:2px}
+.togs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-width:0;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02);cursor:pointer;transition:border-color .3s,background .3s}
+.tog:hover{border-color:#44434a}
+.tog>span{min-width:0}
+.tog b{display:block;line-height:1.25}
+.tog small{display:block;color:var(--mute);font-size:13.5px;margin-top:2px}
+.tog i{flex-shrink:0;width:44px;height:26px;border-radius:999px;background:#2a2a30;position:relative;transition:background .3s}
+.tog i::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .35s var(--ease)}
+.tog[aria-pressed=true]{border-color:rgba(255,77,46,.6);background:rgba(255,77,46,.08)}
+.tog[aria-pressed=true] i{background:var(--acc)}
+.tog[aria-pressed=true] i::after{transform:translateX(18px)}
+@media(max-width:620px){.togs{grid-template-columns:1fr}}
+.total{font-family:var(--display);font-size:clamp(64px,min(9vw,19vw),150px);line-height:.95;font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:6px}
+.total em{font-family:var(--serif);font-style:italic;font-size:.34em;margin-left:.2em}
+.lines{display:grid;gap:8px;font-family:var(--mono);font-size:13px}
+.lines div{display:flex;justify-content:space-between;gap:14px;padding-bottom:8px;border-bottom:1px solid rgba(11,11,13,.2)}
+.lines span:last-child{text-align:right}
+.calc-r .note{font-weight:500;font-size:15.5px;margin:0}
+.calc-r .btn{background:var(--ink);border-color:var(--ink);color:var(--fg);align-self:flex-start}
+@media(max-width:900px){.calc{grid-template-columns:1fr}.total{font-size:clamp(64px,19vw,130px)}}
+
+/* screen 4: terms accordion */
+.acc-l{border-top:1px solid var(--line)}
+.ac{border-bottom:1px solid var(--line)}
+.ac-h{width:100%;background:none;border:0;cursor:pointer;text-align:left;display:grid;grid-template-columns:52px minmax(0,1fr) auto 46px;gap:16px;align-items:center;padding:20px 0;transition:padding .5s var(--ease),background .4s}
+.ac-h:hover,.ac.open .ac-h{padding-inline:14px;background:linear-gradient(90deg,rgba(255,77,46,.1),transparent)}
+.ac-h .n{color:var(--acc)}
+.ac-h b{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(24px,2.8vw,42px);line-height:calc(var(--hl) + .06);min-width:0;overflow-wrap:break-word}
+.ac-h .t{color:var(--mute);text-align:right}
+.ac-h .pl{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;line-height:1;transition:transform .5s var(--ease),background .3s,color .3s,border-color .3s}
+.ac.open .ac-h .pl{transform:rotate(45deg);background:var(--acc);color:var(--ink);border-color:var(--acc)}
+@media(max-width:760px){.ac-h{grid-template-columns:minmax(0,1fr) 46px}.ac-h .n,.ac-h .t{display:none}}
+.ac-b{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s var(--ease)}
+.ac.open .ac-b{grid-template-rows:1fr}
+.ac-in{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s .6s}
+.ac.open .ac-in{visibility:visible;transition-delay:0s}
+.ac-pad{padding:8px 0 30px}
+.ac-pad>p{color:#cfcdc8;max-width:54em;margin:0 0 18px}
+.two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(20px,3vw,48px);align-items:start}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+.tier{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.tier span{max-width:20em;color:#d2d0cb;min-width:0}
+.tier b{font-family:var(--display);font-weight:400;font-size:clamp(32px,4vw,56px);line-height:1;white-space:nowrap}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:900px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.grid3,.grid2{grid-template-columns:1fr}}
+.cell{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:rgba(15,15,17,.8);min-width:0}
+.cell .k{color:var(--acc);display:block}
+.cell b{display:block;font-size:18px;margin:6px 0 4px;line-height:1.25}
+.cell b.big{font-family:var(--display);font-weight:400;font-size:34px;line-height:1.1;text-transform:uppercase;margin:0 0 2px}
+.cell p{margin:0;color:var(--mute);font-size:14.5px}
+
+/* contact */
+.finale{text-align:center;padding-bottom:30px}
+.fin-title{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(40px,6.6vw,112px);line-height:var(--hl);margin:12px 0 0;text-wrap:balance}
+html[lang=uk] .fin-title,html[lang=ru] .fin-title{font-size:clamp(34px,5.4vw,90px)}
+.fin-title .it{color:var(--acc)}
+.orb{position:relative;width:clamp(184px,15vw,220px);aspect-ratio:1;margin:40px auto 0;border-radius:50%;border:0;cursor:pointer;color:var(--ink);background:radial-gradient(circle at 35% 30%,#ff7a4d,var(--acc) 45%,#a52410);box-shadow:0 0 90px rgba(255,77,46,.6),inset 0 -10px 30px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 20px;transition:transform .5s var(--ease)}
+.orb:hover{transform:scale(1.06)}
+.orb:active{transform:scale(.96)}
+.orb::after,.orb::before{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(255,77,46,.5);animation:pulse 2.6s var(--ease) infinite;pointer-events:none}
+.orb::before{animation-delay:1.3s}
+@keyframes pulse{from{transform:scale(.9);opacity:1}to{transform:scale(1.45);opacity:0}}
+.orb b{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(20px,1.9vw,26px);line-height:1.12}
+.orb small{font-family:var(--mono);font-size:10.5px;font-weight:600;background:rgba(11,11,13,.14);padding:3px 8px;border-radius:999px}
+.crow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:760px;margin:44px auto 0;text-align:left}
+.cr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-radius:16px;background:rgba(15,15,17,.85);border:1px solid var(--line);min-width:0}
+.cr .v{font-size:18px;font-weight:500;overflow-wrap:anywhere;user-select:all}
+.cr .k{color:var(--mute);display:block;margin-bottom:2px}
+.copy{flex-shrink:0;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--acc);color:var(--ink);border:0;border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:600}
+@media(max-width:640px){.crow{grid-template-columns:1fr}}
+footer{padding-block:24px 28px}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:#6a6864}
+
+.cursor{position:fixed;left:0;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--acc);pointer-events:none;z-index:70;display:grid;place-items:center;font-family:var(--mono);font-size:0;font-weight:600;color:var(--ink);transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),font-size .2s}
+.cursor.big{width:76px;height:76px;margin:-38px 0 0 -38px;font-size:11px}
+@media(hover:none){.cursor,.glow{display:none}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,24px);opacity:0;visibility:hidden;pointer-events:none;background:var(--fg);color:var(--ink);padding:12px 18px;border-radius:999px;font-weight:700;z-index:95;max-width:calc(100vw - 32px);text-align:center;transition:transform .35s var(--ease),opacity .25s,visibility 0s .35s}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .35s var(--ease),opacity .25s,visibility 0s}
+/* video player overlay (its own class name: nothing else on the page may use it) */
+.vplayer{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:70px 16px 90px;background:rgba(5,5,6,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;transition:opacity .35s}
+.vplayer.on{opacity:1}
+.vplayer[hidden]{display:none!important}
+.vplayer video{max-width:100%;max-height:100%;border-radius:16px;background:#000;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 60px 160px -30px rgba(255,77,46,.55);transform:scale(.86);transition:transform .6s var(--ease)}
+.vplayer.on video{transform:none}
+.vcap{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:14px;align-items:center;padding:10px 18px;border-radius:999px;background:rgba(15,15,17,.85);border:1px solid rgba(255,255,255,.1);white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden}
+.vcap .mono{color:var(--acc)}
+.vclose{position:fixed;top:18px;right:18px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(15,15,17,.8);font-size:20px;cursor:pointer}
+.vclose:hover{background:var(--acc);color:var(--ink)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}[data-r],.pslot{opacity:1;transform:none}html{scroll-behavior:auto}}
+
+/* AI mini-drama spotlight */
+.mds{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:clamp(20px,3vw,48px);align-items:center;margin-bottom:clamp(30px,4vw,56px)}
+.mclip{position:relative;display:block;width:100%;padding:0;border:0;background:#000;color:inherit;font:inherit;text-align:left;cursor:pointer;aspect-ratio:9/16;border-radius:26px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 0 8px #0d0d10,0 0 0 9px rgba(255,255,255,.08),0 80px 150px -50px rgba(255,77,46,.7);transition:transform .6s var(--ease),box-shadow .5s}
+.mclip:hover{transform:translateY(-6px)}
+.mclip video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.mclip .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,7,8,.5),transparent 22%,transparent 60%,rgba(7,7,8,.92))}
+.mclip .tg{position:absolute;left:14px;top:14px;background:rgba(7,7,8,.65);padding:6px 10px;border-radius:6px}
+.mclip .tg i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc);margin-right:7px;animation:blink 1.3s infinite}
+.mclip .cp{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.mclip .cp b{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(26px,2.4vw,36px);line-height:1.02}
+.mclip .cp span.pl{flex-shrink:0;width:54px;height:54px;border-radius:50%;background:var(--acc);color:var(--ink);display:grid;place-items:center;font-size:16px;box-shadow:0 0 0 0 rgba(255,77,46,.6);animation:mpulse 2.2s infinite}
+@keyframes mpulse{70%{box-shadow:0 0 0 18px rgba(255,77,46,0)}100%{box-shadow:0 0 0 0 rgba(255,77,46,0)}}
+.mds h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(32px,4vw,60px);line-height:var(--hl);margin:12px 0 0;text-wrap:balance}
+.mds h3 .it{color:var(--acc)}
+.mds .mp{color:#d2d0cb;font-size:17px;max-width:34em;margin:16px 0 0}
+.mstats{display:flex;flex-wrap:wrap;gap:10px 26px;margin:22px 0 0}
+.mstats div b{display:block;font-family:var(--display);font-weight:400;font-size:42px;line-height:1}
+.mstats div b em{font-style:normal;font-size:.5em;color:var(--acc);margin-left:2px}
+.mstats div span{color:var(--mute);font-size:14px}
+.mrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:26px}
+.mrow .mclip{border-radius:18px;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 40px 80px -40px rgba(255,77,46,.55)}
+.mrow .mclip .cp b{font-size:clamp(18px,1.6vw,24px)}
+.mrow .mclip .cp span.pl{width:38px;height:38px;font-size:12px;animation:none}
+@media(max-width:900px){.mds{grid-template-columns:1fr}.mds>.mclip{width:min(100%,400px);margin-inline:auto}}
+@media(max-width:520px){.mrow{gap:8px}.mrow .mclip .tg{display:none}.mrow .mclip .cp{left:10px;right:10px;bottom:10px}.mrow .mclip .cp span.pl{display:none}}
+
+/* groups: series vs my videos */
+.grp{display:flex;align-items:center;gap:14px;margin:clamp(10px,2vw,20px) 0 clamp(18px,2.4vw,28px)}
+.grp .gn{color:var(--acc);font-size:13px}
+.grp b{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(26px,3vw,44px);line-height:var(--hl);white-space:nowrap}
+.grp .gl{flex:1;height:1px;background:linear-gradient(90deg,rgba(255,77,46,.6),var(--line) 40%,transparent)}
+.grp .gc{color:var(--mute);white-space:nowrap}
+@media(max-width:640px){.grp .gc{display:none}}
+#mine{margin-top:clamp(56px,7vw,100px);padding-top:clamp(26px,3vw,40px);border-top:1px solid var(--line)}
+.mrow{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.mclip .test{position:absolute;left:12px;top:48px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--ink);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+@media(max-width:700px){.mrow{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.tops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,1.8vw,24px)}
+.top{position:relative;display:block;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.top .fr{position:relative;display:block;aspect-ratio:16/9;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 60px 120px -60px rgba(255,77,46,.6);transition:transform .7s var(--ease),box-shadow .5s}
+.top:hover .fr{transform:translateY(-6px) scale(1.01);box-shadow:0 0 0 1px rgba(255,77,46,.75),0 70px 140px -50px rgba(255,77,46,.75)}
+.top video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.top .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,7,8,.5),transparent 25%,transparent 60%,rgba(7,7,8,.85))}
+.top .tg{position:absolute;left:16px;top:16px;background:rgba(7,7,8,.65);padding:6px 10px;border-radius:6px}
+.top .tg i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acc);margin-right:7px;animation:blink 1.3s infinite}
+.top .pl{position:absolute;left:50%;top:50%;width:clamp(64px,6vw,86px);aspect-ratio:1;margin:calc(clamp(64px,6vw,86px)/-2) 0 0 calc(clamp(64px,6vw,86px)/-2);border-radius:50%;background:var(--acc);color:var(--ink);display:grid;place-items:center;font-size:20px;animation:mpulse 2.2s infinite;transition:transform .4s var(--ease)}
+.top:hover .pl{transform:scale(1.1)}
+.top .no{position:absolute;right:18px;bottom:6px;font-family:var(--display);font-size:clamp(46px,5vw,80px);line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.55)}
+.top .cp{display:block;margin-top:14px;padding:0 4px}
+.top .cp b{display:block;font-size:clamp(18px,1.5vw,22px);line-height:1.2}
+.top .cp span{display:block;color:var(--mute);font-size:15px;margin-top:4px;max-width:34em}
+@media(max-width:760px){.tops{grid-template-columns:1fr}}
+.morewrap{display:flex;justify-content:center;margin-top:clamp(28px,3.5vw,44px)}
+.morebtn{position:relative;display:inline-flex;align-items:center;gap:14px;padding:14px 16px 14px 26px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(15,15,17,.8);color:var(--fg);font-weight:700;font-size:16px;cursor:pointer;overflow:hidden;isolation:isolate;transition:border-color .3s,transform .2s var(--ease)}
+.morebtn::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--acc),var(--acc-2));transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease);z-index:-1}
+.morebtn:hover{border-color:var(--acc);color:var(--ink)}.morebtn:hover::before{transform:scaleX(1)}
+.morebtn:active{transform:scale(.97)}
+.morebtn .mc{color:var(--mute);transition:color .3s}.morebtn:hover .mc{color:var(--ink)}
+.morebtn .mi{width:34px;height:34px;border-radius:50%;background:var(--acc);color:var(--ink);display:grid;place-items:center;font-size:20px;line-height:1;transition:transform .5s var(--ease),background .3s}
+.morebtn:hover .mi{background:var(--ink);color:var(--fg)}
+.morebtn[aria-expanded=true] .mi{transform:rotate(45deg)}
+.more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .8s var(--ease)}
+.more.open{grid-template-rows:1fr}
+.more-in{overflow:hidden;min-height:0}
+.more .strip{padding-top:30px;opacity:0;transform:translateY(30px);transition:opacity .6s .15s,transform .8s .1s var(--ease)}
+.more.open .strip{opacity:1;transform:none}
+
+/* i18n layout hardening */
+.pill ul a{white-space:nowrap}
+.pill.compact ul{display:none}
+.pill.tight ul a{padding:8px 7px;font-size:13px;letter-spacing:-.01em}
+.pill.tight ul{gap:0}
+.morebtn{white-space:nowrap}
+@media(max-width:440px){.morebtn .mc{display:none}.morebtn{padding-left:20px;font-size:15px}}
+.mrow .mclip .tg{white-space:nowrap;font-size:10px;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
+.clip .tg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eyebrow{max-width:100%}
+.btn,.copy{white-space:nowrap}
+html[lang=uk] .mds h3,html[lang=ru] .mds h3,html[lang=uk] .grp b,html[lang=ru] .grp b{line-height:1.08}
+html[lang=uk] .mclip .cp b,html[lang=ru] .mclip .cp b{line-height:1.06}
+</style>
+<meta name="description" content="Plans and prices for AI video production: per-minute rates, series with product integration, performance model."><meta property="og:type" content="website"><meta property="og:title" content="Myroslav Kunovskyi — AI video prices"><meta property="og:description" content="Plans and prices for AI video production: per-minute rates, series with product integration, performance model."><meta property="og:image" content="https://miros987511-cmyk.github.io/p/md_case.jpg"><meta property="og:url" content="https://miros987511-cmyk.github.io/price.html"><meta name="twitter:card" content="summary_large_image"></head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="glow" id="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<nav aria-label="Main"><div class="pill">
+  <a class="logo" href="index.html" title="Portfolio">MYROSLAV<span>.</span></a>
+  <ul>
+    <li><a href="index.html" data-i18n="nav.port">← Portfolio</a></li><li><a href="#top" data-i18n="nav.plans">Plans</a></li>
+    <li><a href="#series" data-i18n="nav.series">Series</a></li><li><a href="#work" data-i18n="nav.work">Work</a></li>
+    <li><a href="#calc" data-i18n="nav.calc">Calculator</a></li>
+    <li><a href="#terms" data-i18n="nav.terms">Terms</a></li>
+  </ul>
+  <div class="navr"><div class="langs" role="group" aria-label="Language"><button type="button" data-l="en" aria-pressed="true">EN</button><button type="button" data-l="uk" aria-pressed="false">UA</button><button type="button" data-l="ru" aria-pressed="false">RU</button></div><a class="btn primary sm" href="#contact" data-i18n="nav.quote">Get a quote</a></div>
+</div></nav>
+
+<main>
+<header class="hero" id="top">
+  <div class="wrap" style="width:100%">
+    <div class="hero-top">
+      <div><div class="mono eyebrow"><span data-i18n="hero.eyebrow">Three plans · fixed rates · USD</span></div>
+      <h1 data-i18n="hero.h1">Pick how you <span class="it acc">pay</span></h1></div>
+      <p class="lead" data-i18n="hero.lead">The work is the same on every plan. The only difference is who pays for the AI credits and whether part of the fee depends on sales.</p>
+    </div>
+    <div class="plans" id="plans">
+      <div class="pslot"><div class="plan"><div class="plan-in">
+        <div class="tag mono"><span>01</span><span data-i18n="pl.c1">Credits: client</span></div>
+        <h3>Standard</h3>
+        <div class="price">$<span data-to="70">70</span></div>
+        <div class="per mono" data-i18n="pl.per">per minute of finished video</div>
+        <p class="one" data-i18n="pl.s.p">For companies with their own Higgsfield accounts.</p>
+        <ul><li data-i18n="pl.s.1">You pay AI credits at cost</li><li data-i18n="pl.s.2">Credit usage report with every invoice</li><li data-i18n="pl.all">Full production, two revision rounds, commercial rights</li></ul>
+        <div class="btn-gap"></div>
+        <button class="btn pick" type="button" data-pick="0"><span data-i18n="pl.btn">Calculate</span><i>→</i></button>
+      </div></div></div>
+      <div class="pslot" style="--d:.12s"><div class="plan feat"><div class="plan-in">
+        <div class="tag mono"><span>02</span><b data-i18n="pl.c2">Credits included</b></div>
+        <h3>All-inclusive</h3>
+        <div class="price">$<span data-to="110">110</span></div>
+        <div class="per mono" data-i18n="pl.per">per minute of finished video</div>
+        <p class="one" data-i18n="pl.a.p">One number on the invoice. No subscriptions, no credits to manage.</p>
+        <ul><li data-i18n="pl.a.1">AI credits are on me</li><li data-i18n="pl.a.2">Nothing to set up on your side</li><li data-i18n="pl.all">Full production, two revision rounds, commercial rights</li></ul>
+        <div class="btn-gap"></div>
+        <button class="btn primary pick" type="button" data-pick="1"><span data-i18n="pl.btn">Calculate</span><i>→</i></button>
+      </div></div></div>
+      <div class="pslot" style="--d:.24s"><div class="plan"><div class="plan-in">
+        <div class="tag mono"><span>03</span><span data-i18n="pl.c1">Credits: client</span></div>
+        <h3>Performance</h3>
+        <div class="price">$<span data-to="40">40</span><em>+ %</em></div>
+        <div class="per mono" data-i18n="pl.per3">per minute plus a share of sales</div>
+        <p class="one" data-i18n="pl.p.p">For brands whose sales can be tracked back to each video.</p>
+        <ul><li data-i18n="pl.p.1">5–20% of net sales, fixed in the contract</li><li data-i18n="pl.s.1">You pay AI credits at cost</li><li data-i18n="pl.all">Full production, two revision rounds, commercial rights</li></ul>
+        <div class="btn-gap"></div>
+        <button class="btn pick" type="button" data-pick="2"><span data-i18n="pl.btn">Calculate</span><i>→</i></button>
+      </div></div></div>
+    </div>
+    <div class="hero-foot mono"><span data-i18n="hero.min">Minimum order: 2 minutes · 50% upfront</span><a href="#work" data-i18n="hero.next">See finished work ↓</a></div>
+  </div>
+</header>
+
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head"><div><div class="mono eyebrow" data-r><span data-i18n="wk.eyebrow">What a minute looks like</span></div><h2 data-r data-i18n="wk.h2">Finished <span class="it acc">work</span></h2></div><p data-r data-i18n="wk.p2">Two groups: series with a product inside, and my own top films. Click any video to watch it with sound.</p></div>
+  </div>
+  <div class="wrap" id="series">
+    <div class="grp" data-r><span class="gn mono">01</span><b data-i18n="gr.1">AI mini-drama series</b><span class="gl"></span><span class="mono gc" data-i18n="gr.1c">For brands · product integration</span></div>
+    <div class="mds" id="mds"></div>
+    <div class="grp" id="mine" data-r><span class="gn mono">02</span><b data-i18n="gr.2">My videos</b><span class="gl"></span><span class="mono gc" data-i18n="gr.2c">Top portfolio films</span></div>
+    <div class="tops" id="tops"></div>
+    <div class="morewrap"><button class="morebtn" id="moreb" type="button" aria-expanded="false" aria-controls="more"><span class="mt" id="moret"></span><span class="mc mono" id="morec"></span><span class="mi" aria-hidden="true">+</span></button></div>
+  </div>
+  <div class="more" id="more"><div class="more-in"><div class="strip" id="strip"></div></div></div>
+  <div class="wrap"><p class="nda" data-i18n="wk.nda">Around 90% of my client work is under NDA. <b>Private samples are available on request.</b></p></div>
+</section>
+
+<section id="calc" style="background:rgba(15,15,17,.55);border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head"><div><div class="mono eyebrow" data-r><span data-i18n="ca.eyebrow">Live estimate</span></div><h2 data-r data-i18n="ca.h2">Your price in <span class="it acc">10 seconds</span></h2></div><p data-r data-i18n="ca.p">Pick a plan and move the slider. The number on the right is what goes on the invoice for my work.</p></div>
+    <div class="calc" data-r>
+      <div class="calc-l">
+        <div class="fld"><div class="flabel mono"><span data-i18n="ca.plan">Plan</span></div>
+          <div class="seg" id="seg"><button type="button" data-p="0" aria-pressed="true">Standard<small>$70</small></button><button type="button" data-p="1" aria-pressed="false">All-inclusive<small>$110</small></button><button type="button" data-p="2" aria-pressed="false">Performance<small>$40 + %</small></button></div></div>
+        <div class="fld"><label class="flabel mono" for="rng"><span data-i18n="ca.min">Minutes of finished video</span><span class="val" id="rv">5</span></label>
+          <input type="range" id="rng" min="2" max="60" step="1" value="5">
+          <div class="rng-s mono"><span data-i18n="ca.minmin">2 min minimum</span><span>60</span></div></div>
+        <div class="togs">
+          <button class="tog" type="button" id="tRush" aria-pressed="false"><span><b data-i18n="ca.rush">Rush, within 24 hours</b><small data-i18n="ca.rushd">+50% of the rate</small></span><i></i></button>
+          <button class="tog" type="button" id="tFmt" aria-pressed="false"><span><b data-i18n="ca.fmt">Second format</b><small data-i18n="ca.fmtd">50% of the rate per minute</small></span><i></i></button></div>
+      </div>
+      <div class="calc-r" aria-live="polite">
+        <div><div class="mono" data-i18n="ca.total">Your estimate</div><div class="total" id="tot">$350</div></div>
+        <div class="lines" id="lines"></div>
+        <p class="note" id="cnote"></p>
+        <a class="btn" href="#contact" data-i18n="ca.cta">Send this brief →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="terms">
+  <div class="wrap">
+    <div class="sec-head"><div><div class="mono eyebrow" data-r><span data-i18n="dt.eyebrow">No surprises on the invoice</span></div><h2 data-r data-i18n="dt.h2">Terms &amp; <span class="it acc">add-ons</span></h2></div><p data-r data-i18n="dt.p">Everything that can change the price is written here. Click a row to open it.</p></div>
+    <div class="acc-l" id="accs" data-r>
+      <div class="ac open">
+        <button class="ac-h" type="button" aria-expanded="true"><span class="n mono">01</span><b data-i18n="dt.1">Share of sales</b><span class="t mono" data-i18n="dt.1t">Performance plan · 5–20%</span><span class="pl" aria-hidden="true">+</span></button>
+        <div class="ac-b"><div class="ac-in"><div class="ac-pad">
+          <p data-i18n="pf.p">A base rate of $40 per minute plus a percentage of the net sales the video brings in. The percentage is fixed in the contract before work starts and depends on the brand, the target audience and the product: its margin, the size of the audience and the ad budget behind the video.</p>
+          <div class="two">
+            <div>
+              <div class="tier"><span data-i18n="pf.t1">Established brand with its own traffic and ad budget</span><b>5–8%</b></div>
+              <div class="tier"><span data-i18n="pf.t2">Brand with steady sales and a mid-size audience</span><b>8–12%</b></div>
+              <div class="tier"><span data-i18n="pf.t3">New brand or product launch with no audience yet</span><b>12–20%</b></div>
+            </div>
+            <div class="grid2">
+              <div class="cell"><span class="k mono">01</span><b data-i18n="pf.c1h">Tracked sales</b><p data-i18n="pf.c1p">A promo code used only in my videos, UTM links, and Meta and TikTok ad reports per video. The client gives me view access.</p></div>
+              <div class="cell"><span class="k mono">02</span><b data-i18n="pf.c3h">120 days</b><p data-i18n="pf.c3p">The percentage accrues for 120 days from the publication date of each video. Net sales exclude returns and taxes.</p></div>
+              <div class="cell"><span class="k mono">03</span><b data-i18n="pf.c4h">First Wednesday payout</b><p data-i18n="pf.c4p">Paid every first Wednesday of the month or by agreement, together with a sales report.</p></div>
+              <div class="cell"><span class="k mono">04</span><b data-i18n="pf.c6h">No tracking, no share</b><p data-i18n="pf.c6p">If sales cannot be tracked, the Standard or All-inclusive plan applies. AI credits are paid by the client at cost.</p></div>
+            </div>
+          </div>
+        </div></div></div>
+      </div>
+      <div class="ac">
+        <button class="ac-h" type="button" aria-expanded="false"><span class="n mono">02</span><b data-i18n="dt.2">Add-ons</b><span class="t mono" data-i18n="dt.2t">Rush · formats · extra revisions</span><span class="pl" aria-hidden="true">+</span></button>
+        <div class="ac-b"><div class="ac-in"><div class="ac-pad"><div class="grid2">
+          <div class="cell"><b class="big">+50%</b><b data-i18n="ad.1h">Rush order, delivery within 24 hours</b><p data-i18n="ad.1p">Added to the plan rate.</p></div>
+          <div class="cell"><b class="big">50%</b><b data-i18n="ad.2h">Additional format of the same video</b><p data-i18n="ad.2p">Of the plan rate per minute. Standard and Performance: the client pays the credits. All-inclusive: credits included.</p></div>
+          <div class="cell"><b class="big">20%</b><b data-i18n="ad.3h">Revision round beyond the two included</b><p data-i18n="ad.3p">Of the video price. AI credits for extra revisions are paid by the client on any plan.</p></div>
+          <div class="cell"><b class="big" data-i18n="ad.4b">By scope</b><b data-i18n="ad.4h">Change to an approved script</b><p data-i18n="ad.4p">Depends on how much work is already done: spent credits and my time are not refundable. New seconds are billed at the plan rate.</p></div>
+        </div></div></div></div>
+      </div>
+      <div class="ac">
+        <button class="ac-h" type="button" aria-expanded="false"><span class="n mono">03</span><b data-i18n="dt.3">Working terms</b><span class="t mono" data-i18n="dt.3t">Payment · timeline · rights</span><span class="pl" aria-hidden="true">+</span></button>
+        <div class="ac-b"><div class="ac-in"><div class="ac-pad"><div class="grid3">
+          <div class="cell"><span class="k mono" data-i18n="tm.1k">Minimum order</span><b data-i18n="tm.1b">2 minutes</b><p data-i18n="tm.1p">Of finished video in total.</p></div>
+          <div class="cell"><span class="k mono" data-i18n="tm.2k">Payment</span><b>50 / 50</b><p data-i18n="tm.2p">50% upfront, 50% before the final files are handed over. Regular clients are invoiced once a week.</p></div>
+          <div class="cell"><span class="k mono" data-i18n="tm.3k">Timeline</span><b data-i18n="tm.3b">1 working day per minute</b><p data-i18n="tm.3p">Counted after the script is approved.</p></div>
+          <div class="cell"><span class="k mono" data-i18n="tm.4k">Revisions</span><b data-i18n="tm.4b">One list, 5 days</b><p data-i18n="tm.4p">Revisions are sent as one list within 5 days of delivery.</p></div>
+          <div class="cell"><span class="k mono" data-i18n="tm.5k">Rights</span><b data-i18n="tm.5b">Yours after payment</b><p data-i18n="tm.5p">I may show the work in my portfolio unless the contract includes an NDA.</p></div>
+          <div class="cell"><span class="k mono" data-i18n="tm.6k">Prices</span><b data-i18n="tm.6b">This quarter</b><p data-i18n="tm.6p">Valid for orders confirmed before the end of the current quarter.</p></div>
+        </div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="finale" id="contact" style="padding-top:0">
+  <div class="wrap">
+    <div class="mono eyebrow" style="justify-content:center" data-r><span data-i18n="fi.eyebrow">Email or Telegram</span></div>
+    <div class="fin-title" data-r data-i18n="fi.t">Got a brief?<br><span class="it">Get a quote.</span></div>
+    <button class="orb" id="orb" type="button" data-r><b data-i18n="fi.copy">Copy my email</b><small>miros987511@gmail.com</small></button>
+    <div class="crow" data-r>
+      <div class="cr"><div style="min-width:0"><span class="k mono">Email</span><span class="v" id="mail">miros987511@gmail.com</span></div><button class="copy" type="button" data-copy="mail" data-i18n="copy">Copy</button></div>
+      <div class="cr"><div style="min-width:0"><span class="k mono">Telegram</span><span class="v" id="tg">@mirrrosss</span></div><button class="copy" type="button" data-copy="tg" data-i18n="copy">Copy</button></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><div class="foot mono"><span data-i18n="ft.1">© 2026 Myroslav Kunovskyi · AI Video Creator</span><a href="index.html" data-i18n="ft.2">← Back to portfolio</a></div></div></footer>
+
+<div class="cursor" id="cursor" aria-hidden="true">PLAY</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="vplayer" id="vp" hidden role="dialog" aria-modal="true" aria-label="Video player"><video id="vpv" playsinline controls></video><div class="vcap"><span class="mono" id="vpk"></span><b id="vpt"></b></div><button class="vclose" id="vpc" type="button" aria-label="Close video">✕</button></div>
+
+<script>
+(function(){
+'use strict';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hoverable=matchMedia('(hover:hover) and (pointer:fine)').matches;
+const $=q=>document.querySelector(q), $$=q=>[...document.querySelectorAll(q)];
+
+/* ---------- copy ---------- */
+const UK={
+"nav.plans":"Тарифи","wk.p2":"Дві групи: серіали з продуктом усередині та мої найкращі фільми. Натисніть на відео, щоб подивитися зі звуком.","gr.1":"AI-міні-серіали","gr.1c":"Для брендів · інтеграція продукту","gr.2":"Мої відео","gr.2c":"Найкращі фільми портфоліо","nav.port":"← Портфоліо","nav.series":"Серіал","nav.work":"Роботи","nav.calc":"Калькулятор","nav.terms":"Умови","nav.quote":"Запитати ціну",
+"hero.eyebrow":"Три тарифи · фіксовані ставки · USD",
+"hero.h1":"Оберіть, як <span class=\"it acc\">платити</span>",
+"hero.lead":"Робота однакова в кожному тарифі. Різниця лише в тому, хто оплачує кредити нейромереж і чи залежить частина оплати від продажів.",
+"hero.min":"Мінімальне замовлення: 2 хвилини · 50% передоплата","hero.next":"Дивитися готові роботи ↓",
+"pl.c1":"Кредити: клієнт","pl.c2":"Кредити включено","pl.per":"за хвилину готового відео","pl.per3":"за хвилину плюс частка продажів",
+"pl.s.p":"Компаніям із власними акаунтами Higgsfield.","pl.s.1":"Кредити ви оплачуєте за фактом витрат","pl.s.2":"Звіт про витрати кредитів до кожного рахунку",
+"pl.all":"Повний продакшн, два раунди правок, комерційні права",
+"pl.a.p":"Одна сума в рахунку. Без підписок і без кредитів.","pl.a.1":"Кредити нейромереж оплачую я","pl.a.2":"З вашого боку нічого налаштовувати не треба",
+"pl.p.p":"Брендам із продажами, які можна відстежити за кожним роликом.","pl.p.1":"5–20% від чистих продажів, фіксується в договорі",
+"pl.btn":"Порахувати",
+"wk.eyebrow":"Як виглядає хвилина","wk.h2":"Готові <span class=\"it acc\">роботи</span>","wk.p":"Перетягуйте стрічку. Натисніть на ролик, щоб подивитися зі звуком.",
+"wk.nda":"Близько 90% моїх клієнтських робіт під NDA. <b>Приватні приклади — на запит.</b>",
+"ca.eyebrow":"Розрахунок наживо","ca.h2":"Ваша ціна за <span class=\"it acc\">10 секунд</span>","ca.p":"Оберіть тариф і посуньте повзунок. Число праворуч — сума в рахунку за мою роботу.",
+"ca.plan":"Тариф","ca.min":"Хвилин готового відео","ca.minmin":"мінімум 2 хв",
+"ca.rush":"Терміново, до 24 годин","ca.rushd":"+50% до ставки","ca.fmt":"Другий формат","ca.fmtd":"50% ставки за хвилину",
+"ca.total":"Ваш розрахунок","ca.cta":"Надіслати бриф →",
+"dt.eyebrow":"Без сюрпризів у рахунку","dt.h2":"Умови та <span class=\"it acc\">доплати</span>","dt.p":"Усе, що може змінити ціну, написано тут. Натисніть на рядок, щоб відкрити.",
+"dt.1":"Відсоток від продажів","dt.1t":"Тариф Performance · 5–20%","dt.2":"Доплати","dt.2t":"Терміновість · формати · правки","dt.3":"Умови роботи","dt.3t":"Оплата · терміни · права",
+"pf.p":"Базова ставка $40 за хвилину плюс відсоток від чистих продажів, які принесло відео. Відсоток фіксується в договорі до початку роботи й залежить від бренду, цільової аудиторії та продукту: його маржі, розміру аудиторії та рекламного бюджету на просування відео.",
+"pf.t1":"Відомий бренд із власним трафіком і рекламним бюджетом","pf.t2":"Бренд із стабільними продажами, середня аудиторія","pf.t3":"Новий бренд або запуск продукту, аудиторії ще немає",
+"pf.c1h":"Відстеження продажів","pf.c1p":"Окремий промокод для моїх відео, UTM-посилання та звіти рекламних кабінетів Meta й TikTok по кожному ролику. Клієнт надає доступ на перегляд.",
+"pf.c3h":"120 днів","pf.c3p":"Відсоток нараховується 120 днів від дати публікації кожного відео. Чисті продажі рахуються без повернень і податків.",
+"pf.c4h":"Виплата першої середи","pf.c4p":"Кожної першої середи місяця або за домовленістю, разом зі звітом про продажі.",
+"pf.c6h":"Без відстеження немає відсотка","pf.c6p":"Якщо продажі відстежити неможливо, діє тариф Standard або All-inclusive. Кредити нейромереж оплачує клієнт за фактом витрат.",
+"ad.1h":"Термінове замовлення, здача до 24 годин","ad.1p":"Додається до ставки тарифу.",
+"ad.2h":"Додатковий формат того самого ролика","ad.2p":"Від ставки тарифу за хвилину. Standard і Performance: кредити оплачує клієнт. All-inclusive: кредити включено.",
+"ad.3h":"Раунд правок понад два включені","ad.3p":"Від вартості ролика. Кредити на додаткові правки в будь-якому тарифі оплачує клієнт.",
+"ad.4b":"За обсягом","ad.4h":"Зміна затвердженого сценарію","ad.4p":"Залежить від обсягу вже виконаної роботи: витрачені кредити й мій час не повертаються. Нові секунди оплачуються за ставкою тарифу.",
+"tm.1k":"Мінімальне замовлення","tm.1b":"2 хвилини","tm.1p":"Готового відео сумарно.",
+"tm.2k":"Оплата","tm.2p":"50% передоплата, 50% перед передачею фінальних файлів. Постійним клієнтам рахунок виставляється раз на тиждень.",
+"tm.3k":"Терміни","tm.3b":"1 робочий день на хвилину","tm.3p":"Рахується після затвердження сценарію.",
+"tm.4k":"Правки","tm.4b":"Один список, 5 днів","tm.4p":"Правки приймаються одним списком протягом 5 днів після здачі.",
+"tm.5k":"Права","tm.5b":"Ваші після оплати","tm.5p":"Я можу показувати роботу в портфоліо, якщо договір не передбачає NDA.",
+"tm.6k":"Ціни","tm.6b":"Цей квартал","tm.6p":"Діють для замовлень, підтверджених до кінця поточного кварталу.",
+"fi.eyebrow":"Email або Telegram","fi.t":"Є бриф?<br><span class=\"it\">Дізнайтеся ціну.</span>","fi.copy":"Скопіювати email","copy":"Копіювати",
+"ft.1":"© 2026 Мирослав Куновський · AI-відеокреатор","ft.2":"← До портфоліо"};
+const RU={
+"nav.plans":"Тарифы","wk.p2":"Две группы: сериалы с продуктом внутри и мои лучшие фильмы. Нажмите на видео, чтобы посмотреть со звуком.","gr.1":"AI-мини-сериалы","gr.1c":"Для брендов · интеграция продукта","gr.2":"Мои видео","gr.2c":"Лучшие фильмы портфолио","nav.port":"← Портфолио","nav.series":"Сериал","nav.work":"Работы","nav.calc":"Калькулятор","nav.terms":"Условия","nav.quote":"Узнать цену",
+"hero.eyebrow":"Три тарифа · фиксированные ставки · USD",
+"hero.h1":"Выберите, как <span class=\"it acc\">платить</span>",
+"hero.lead":"Работа одинакова в каждом тарифе. Разница только в том, кто оплачивает кредиты нейросетей и зависит ли часть оплаты от продаж.",
+"hero.min":"Минимальный заказ: 2 минуты · 50% предоплата","hero.next":"Смотреть готовые работы ↓",
+"pl.c1":"Кредиты: клиент","pl.c2":"Кредиты включены","pl.per":"за минуту готового видео","pl.per3":"за минуту плюс доля продаж",
+"pl.s.p":"Компаниям с собственными аккаунтами Higgsfield.","pl.s.1":"Кредиты вы оплачиваете по факту расходов","pl.s.2":"Отчёт о расходе кредитов к каждому счёту",
+"pl.all":"Полный продакшн, два раунда правок, коммерческие права",
+"pl.a.p":"Одна сумма в счёте. Без подписок и без кредитов.","pl.a.1":"Кредиты нейросетей оплачиваю я","pl.a.2":"С вашей стороны ничего настраивать не нужно",
+"pl.p.p":"Брендам с продажами, которые можно отследить по каждому ролику.","pl.p.1":"5–20% от чистых продаж, фиксируется в договоре",
+"pl.btn":"Посчитать",
+"wk.eyebrow":"Как выглядит минута","wk.h2":"Готовые <span class=\"it acc\">работы</span>","wk.p":"Перетаскивайте ленту. Нажмите на ролик, чтобы посмотреть со звуком.",
+"wk.nda":"Около 90% моих клиентских работ под NDA. <b>Приватные примеры — по запросу.</b>",
+"ca.eyebrow":"Расчёт вживую","ca.h2":"Ваша цена за <span class=\"it acc\">10 секунд</span>","ca.p":"Выберите тариф и подвиньте ползунок. Число справа — сумма в счёте за мою работу.",
+"ca.plan":"Тариф","ca.min":"Минут готового видео","ca.minmin":"минимум 2 мин",
+"ca.rush":"Срочно, до 24 часов","ca.rushd":"+50% к ставке","ca.fmt":"Второй формат","ca.fmtd":"50% ставки за минуту",
+"ca.total":"Ваш расчёт","ca.cta":"Отправить бриф →",
+"dt.eyebrow":"Без сюрпризов в счёте","dt.h2":"Условия и <span class=\"it acc\">доплаты</span>","dt.p":"Всё, что может изменить цену, написано здесь. Нажмите на строку, чтобы открыть.",
+"dt.1":"Процент от продаж","dt.1t":"Тариф Performance · 5–20%","dt.2":"Доплаты","dt.2t":"Срочность · форматы · правки","dt.3":"Условия работы","dt.3t":"Оплата · сроки · права",
+"pf.p":"Базовая ставка $40 за минуту плюс процент от чистых продаж, которые принесло видео. Процент фиксируется в договоре до начала работы и зависит от бренда, целевой аудитории и продукта: его маржи, размера аудитории и рекламного бюджета на продвижение видео.",
+"pf.t1":"Известный бренд с собственным трафиком и рекламным бюджетом","pf.t2":"Бренд со стабильными продажами, средняя аудитория","pf.t3":"Новый бренд или запуск продукта, аудитории ещё нет",
+"pf.c1h":"Отслеживание продаж","pf.c1p":"Отдельный промокод для моих видео, UTM-ссылки и отчёты рекламных кабинетов Meta и TikTok по каждому ролику. Клиент даёт доступ на просмотр.",
+"pf.c3h":"120 дней","pf.c3p":"Процент начисляется 120 дней с даты публикации каждого видео. Чистые продажи считаются без возвратов и налогов.",
+"pf.c4h":"Выплата в первую среду","pf.c4p":"Каждую первую среду месяца или по договорённости, вместе с отчётом о продажах.",
+"pf.c6h":"Нет отслеживания — нет процента","pf.c6p":"Если продажи отследить невозможно, действует тариф Standard или All-inclusive. Кредиты нейросетей оплачивает клиент по факту расходов.",
+"ad.1h":"Срочный заказ, сдача в течение 24 часов","ad.1p":"Добавляется к ставке тарифа.",
+"ad.2h":"Дополнительный формат того же ролика","ad.2p":"От ставки тарифа за минуту. Standard и Performance: кредиты оплачивает клиент. All-inclusive: кредиты включены.",
+"ad.3h":"Раунд правок сверх двух включённых","ad.3p":"От стоимости ролика. Кредиты на дополнительные правки в любом тарифе оплачивает клиент.",
+"ad.4b":"По объёму","ad.4h":"Изменение утверждённого сценария","ad.4p":"Зависит от объёма уже выполненной работы: потраченные кредиты и моё время не возвращаются. Новые секунды оплачиваются по ставке тарифа.",
+"tm.1k":"Минимальный заказ","tm.1b":"2 минуты","tm.1p":"Готового видео суммарно.",
+"tm.2k":"Оплата","tm.2p":"50% предоплата, 50% перед передачей финальных файлов. Постоянным клиентам счёт выставляется раз в неделю.",
+"tm.3k":"Сроки","tm.3b":"1 рабочий день на минуту","tm.3p":"Считается после утверждения сценария.",
+"tm.4k":"Правки","tm.4b":"Один список, 5 дней","tm.4p":"Правки принимаются одним списком в течение 5 дней после сдачи.",
+"tm.5k":"Права","tm.5b":"Ваши после оплаты","tm.5p":"Я могу показывать работу в портфолио, если договор не предусматривает NDA.",
+"tm.6k":"Цены","tm.6b":"Этот квартал","tm.6p":"Действуют для заказов, подтверждённых до конца текущего квартала.",
+"fi.eyebrow":"Email или Telegram","fi.t":"Есть бриф?<br><span class=\"it\">Узнайте цену.</span>","fi.copy":"Скопировать email","copy":"Копировать",
+"ft.1":"© 2026 Мирослав Куновский · AI-видеокреатор","ft.2":"← К портфолио"};
+const DICT={uk:UK,ru:RU};
+const S={
+ en:{min:'min',rush:'Rush +50%',fmt:'Second format',credC:'Plus AI credits at cost, with a usage report.',credI:'AI credits are included. This is the whole invoice.',perf:'Plus a share of net sales for 120 days, and AI credits at cost.',days:n=>'≈ '+n+' working day'+(n>1?'s':''),rushT:'Within 24 hours',rushB:'Agreed separately',del:'Delivery',copied:'Copied: ',sel:'Selected · press Ctrl+C',client:'Client case',promo:'Promo',ba:'Before → After',ch:'Character',bu:'Build',mEy:'New · AI mini-drama series',mH:'A series with <span class="it">your product</span> inside',mP:'Two episodes, one product woven into the plot. Start with the brand case: it walks through every placement, stage by stage.',mCase:'Brand case',mCaseT:'How the product is woven in',mTr:'Trailer',mE1:'Episode 1',mE2:'Episode 2',ms1:'product on screen',ms2:'placements',ms3:'of story',mOt:'The Other Me',mTest:'Test series',mEp1:'Ep. 1',in:'Interiors',moreO:'Show full portfolio',moreC:'Hide portfolio',moreN:n=>n+' videos',t1:'Any brief. Any conditions.',t1p:'72-second jungle promo: my AI twin, a jelly mascot and motion design rebuilt frame by frame.',t2:'I direct. Claude automates.',t2p:'44-second showreel: the whole pipeline from idea to render, 3D clay to final shot.',top:'Top film',reel:'Showreel'},
+ uk:{min:'хв',rush:'Терміновість +50%',fmt:'Другий формат',credC:'Плюс кредити нейромереж за фактом витрат, зі звітом.',credI:'Кредити нейромереж включено. Це весь рахунок.',perf:'Плюс відсоток від чистих продажів протягом 120 днів і кредити за фактом витрат.',days:n=>'≈ '+n+' роб. дн.',rushT:'До 24 годин',rushB:'Узгоджується окремо',del:'Здача',copied:'Скопійовано: ',sel:'Виділено · натисніть Ctrl+C',client:'Клієнтський кейс',promo:'Промо',ba:'До → Після',ch:'Персонаж',bu:'Будівництво',mEy:'Нове · AI-міні-серіал',mH:'Серіал з <span class="it">вашим продуктом</span> усередині',mP:'Дві серії, один продукт, вшитий у сюжет. Почніть із кейсу для бренду: він показує кожне розміщення, етап за етапом.',mCase:'Кейс для бренду',mCaseT:'Як продукт вшито в сюжет',mTr:'Трейлер',mE1:'Серія 1',mE2:'Серія 2',ms1:'продукт у кадрі',ms2:'розміщень',ms3:'історії',mOt:'The Other Me',mTest:'Тестовий серіал',mEp1:'Серія 1',in:'Інтер’єри',moreO:'Показати все портфоліо',moreC:'Сховати портфоліо',moreN:n=>n+' відео',t1:'Будь-який бриф. Будь-які умови.',t1p:'72-секундне промо в джунглях: мій AI-двійник, желейний маскот і моушн-дизайн, зібраний покадрово.',t2:'Я режисую. Claude автоматизує.',t2p:'44-секундний шоуріл: увесь пайплайн від ідеї до рендера, від сірого 3D до фінального кадру.',top:'Топ-фільм',reel:'Шоуріл'},
+ ru:{min:'мин',rush:'Срочность +50%',fmt:'Второй формат',credC:'Плюс кредиты нейросетей по факту расходов, с отчётом.',credI:'Кредиты нейросетей включены. Это весь счёт.',perf:'Плюс процент от чистых продаж в течение 120 дней и кредиты по факту расходов.',days:n=>'≈ '+n+' раб. дн.',rushT:'До 24 часов',rushB:'Согласуется отдельно',del:'Сдача',copied:'Скопировано: ',sel:'Выделено · нажмите Ctrl+C',client:'Клиентский кейс',promo:'Промо',ba:'До → После',ch:'Персонаж',bu:'Стройка',mEy:'Новое · AI-мини-сериал',mH:'Сериал с <span class="it">вашим продуктом</span> внутри',mP:'Две серии, один продукт, вшитый в сюжет. Начните с кейса для бренда: он показывает каждое размещение, этап за этапом.',mCase:'Кейс для бренда',mCaseT:'Как продукт вшит в сюжет',mTr:'Трейлер',mE1:'Серия 1',mE2:'Серия 2',ms1:'продукт в кадре',ms2:'размещений',ms3:'истории',mOt:'The Other Me',mTest:'Тестовый сериал',mEp1:'Серия 1',in:'Интерьеры',moreO:'Показать всё портфолио',moreC:'Скрыть портфолио',moreN:n=>n+' видео',t1:'Любой бриф. Любые условия.',t1p:'72-секундное промо в джунглях: мой AI-двойник, желейный маскот и моушн-дизайн, собранный покадрово.',t2:'Я режиссирую. Claude автоматизирует.',t2p:'44-секундный шоурил: весь пайплайн от идеи до рендера, от серого 3D до финального кадра.',top:'Топ-фильм',reel:'Шоурил'}
+};
+let LANG='en';try{const v=localStorage.getItem('mk-lang');if(v==='uk'||v==='ru'||v==='en')LANG=v}catch(e){}
+const L=()=>S[LANG];
+const I=$$('[data-i18n]');I.forEach(el=>{el._en=el.innerHTML});
+function setLang(l){
+  LANG=l;document.documentElement.lang=l;try{localStorage.setItem('mk-lang',l)}catch(e){}
+  I.forEach(el=>{const v=l==='en'?el._en:(DICT[l][el.dataset.i18n]);el.innerHTML=v==null?el._en:v});
+  $$('.langs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===l)));
+  buildStrip();buildMD();buildTops();calc(true);fitNav();
+}
+$$('.langs button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
+
+/* ---------- reveal + count-up ---------- */
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -4% 0px'});
+$$('[data-r],.pslot').forEach(el=>io.observe(el));
+function countUp(el,delay){if(reduce)return;const to=+el.dataset.to,t0=performance.now()+delay;el.textContent='0';
+  (function f(n){const p=Math.max(0,Math.min(1,(n-t0)/1300)),e=1-Math.pow(1-p,4);el.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(f)})(performance.now())}
+$$('#plans [data-to]').forEach((el,i)=>countUp(el,250+i*160));
+
+/* ---------- plans: every card turns toward the cursor, wherever it is on the screen ---------- */
+const CARDS=$$('.plan').map((el,i)=>({el,slot:el.parentElement,i,rx:0,ry:0,h:0,hov:false}));
+let mx=-1,my=-1,seen=false;
+CARDS.forEach(c=>{
+  c.el.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){c.hov=true;c.el.classList.add('hov')}});
+  c.el.addEventListener('pointerleave',()=>{c.hov=false;c.el.classList.remove('hov')});
+  c.el.addEventListener('pointermove',e=>{const r=c.el.getBoundingClientRect();c.el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');c.el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%')});
+});
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function tilt(t){
+  const W=innerWidth,H=innerHeight;
+  for(const c of CARDS){
+    const r=c.slot.getBoundingClientRect();
+    if(r.bottom<-200||r.top>H+200)continue;
+    const cx=r.left+r.width/2,cy=r.top+r.height/2;let ty,tx;
+    if(hoverable&&seen){ty=clamp((mx-cx)/(W*.55),-1,1)*15;tx=clamp((cy-my)/(H*.6),-1,1)*11}
+    else if(hoverable){ty=Math.sin(t*.9+c.i*1.3)*4;tx=Math.cos(t*.7+c.i)*2.5} /* mouse not on the page yet: slow sway */
+    else{ty=Math.sin(t*.9+c.i*1.3)*3.5;tx=clamp((cy-H/2)/H,-1,1)*-7} /* touch: sway + lean with the scroll */
+    if(reduce){tx=0;ty=0}
+    c.rx+=(tx-c.rx)*.09;c.ry+=(ty-c.ry)*.09;c.h+=((c.hov?1:0)-c.h)*.12;
+    c.el.style.setProperty('--rx',c.rx.toFixed(2));c.el.style.setProperty('--ry',c.ry.toFixed(2));c.el.style.setProperty('--h',c.h.toFixed(3));
+  }
+}
+
+/* ---------- particles (2D embers) + cursor ---------- */
+const cv=$('#fx'),g=cv.getContext('2d');let W=0,H=0,dpr=1,P=[],gx=innerWidth/2,gy=innerHeight/3,tgx=gx,tgy=gy;
+function mk(any){const t=Math.random();return{x:Math.random()*W,y:any?Math.random()*H:H+10,vx:(Math.random()-.5)*.25,vy:-(.15+Math.random()*.55),s:.6+Math.random()*1.9,a:.15+Math.random()*.6,ph:Math.random()*6.28,c:'255,'+Math.round(77+120*t)+','+Math.round(46+60*t*t)}}
+function size(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr|0;cv.height=H*dpr|0;g.setTransform(dpr,0,0,dpr,0,0);
+  const n=Math.round(Math.min(170,W*H/11000));P=[];for(let i=0;i<n;i++)P.push(mk(true))}
+addEventListener('resize',size);
+addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;mx=e.clientX;my=e.clientY;seen=true;tgx=mx;tgy=my},{passive:true});
+document.documentElement.addEventListener('pointerleave',()=>{seen=false});
+const glow=$('#glow'),cur=$('#cursor');let cx0=0,cy0=0;
+function frame(now){
+  requestAnimationFrame(frame);
+  if(document.hidden)return;
+  const t=now/1000;
+  tilt(t);
+  gx+=(tgx-gx)*.07;gy+=(tgy-gy)*.07;glow.style.transform='translate('+gx+'px,'+gy+'px)';
+  if(hoverable){cx0+=(mx-cx0)*.3;cy0+=(my-cy0)*.3;cur.style.transform='translate('+cx0+'px,'+cy0+'px)'}
+  if(reduce)return;
+  g.clearRect(0,0,W,H);g.globalCompositeOperation='lighter';
+  const px=seen?mx:-9999,py=seen?my:-9999;
+  for(const p of P){
+    const dx=p.x-px,dy=p.y-py,d2=dx*dx+dy*dy;
+    if(d2<22000){const d=Math.sqrt(d2)||1,f=(1-d/148)*.9;p.vx+=dx/d*f*.25;p.vy+=dy/d*f*.25}
+    p.vx*=.97;p.vy+=(-(.15+p.s*.2)-p.vy)*.03;
+    p.x+=p.vx+Math.sin(t+p.ph)*.18;p.y+=p.vy;
+    if(p.y<-12||p.x<-20||p.x>W+20)Object.assign(p,mk(false));
+    const a=p.a*(.6+.4*Math.sin(t*1.7+p.ph));
+    g.fillStyle='rgba('+p.c+','+a.toFixed(3)+')';g.beginPath();g.arc(p.x,p.y,p.s,0,6.283);g.fill();
+    if(p.s>1.9){g.fillStyle='rgba('+p.c+','+(a*.12).toFixed(3)+')';g.beginPath();g.arc(p.x,p.y,p.s*5,0,6.283);g.fill()}
+  }
+}
+
+/* ---------- calculator ---------- */
+const RATE=[70,110,40];
+const rng=$('#rng'),tot=$('#tot'),lines=$('#lines'),cnote=$('#cnote');let cp=0,rush=false,fmt=false,shown=350,raf=0;
+function fmtN(n){return '$'+Math.round(n).toLocaleString('en-US')}
+function calc(instant){
+  const m=+rng.value,r=RATE[cp],base=m*r,ru=rush?base*.5:0,fm=fmt?m*r*.5:0,total=base+ru+fm,T=L();
+  $('#rv').textContent=m+' '+T.min;rng.style.setProperty('--f',((m-2)/58*100)+'%');
+  const rows=[[m+' '+T.min+' × $'+r,fmtN(base)]];
+  if(rush)rows.push([T.rush,'+'+fmtN(ru)]);
+  if(fmt)rows.push([T.fmt,'+'+fmtN(fm)]);
+  rows.push([T.del,rush?(m<=5?T.rushT:T.rushB):T.days(m)]);
+  lines.innerHTML=rows.map(x=>'<div><span>'+x[0]+'</span><span>'+x[1]+'</span></div>').join('');
+  cnote.textContent=cp===1?T.credI:cp===2?T.perf:T.credC;
+  const suffix=cp===2?'<em>+ %</em>':'';
+  cancelAnimationFrame(raf);
+  if(instant||reduce){shown=total;tot.innerHTML=fmtN(total)+suffix;return}
+  const from=shown,t0=performance.now();
+  (function f(n){const p=Math.min(1,(n-t0)/450),e=1-Math.pow(1-p,3);shown=from+(total-from)*e;tot.innerHTML=fmtN(shown)+suffix;if(p<1)raf=requestAnimationFrame(f)})(t0);
+}
+function setPlan(i){cp=i;$$('#seg button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.p===i)));calc()}
+$$('#seg button').forEach(b=>b.addEventListener('click',()=>setPlan(+b.dataset.p)));
+rng.addEventListener('input',()=>calc());rng.addEventListener('change',()=>calc());
+$('#tRush').addEventListener('click',e=>{rush=!rush;e.currentTarget.setAttribute('aria-pressed',String(rush));calc()});
+$('#tFmt').addEventListener('click',e=>{fmt=!fmt;e.currentTarget.setAttribute('aria-pressed',String(fmt));calc()});
+$$('.pick').forEach(b=>b.addEventListener('click',()=>{setPlan(+b.dataset.pick);$('#calc').scrollIntoView({behavior:reduce?'auto':'smooth'})}));
+
+/* ---------- accordion: one row open at a time ---------- */
+const ACS=$$('.ac');
+ACS.forEach(a=>a.querySelector('.ac-h').addEventListener('click',()=>{
+  const open=!a.classList.contains('open');
+  ACS.forEach(o=>{const on=o===a&&open;o.classList.toggle('open',on);o.querySelector('.ac-h').setAttribute('aria-expanded',String(on))});
+}));
+
+/* ---------- work strip ---------- */
+const WORK=[
+ {k:'muterra1',t:'MUTERRA',c:'client',d:'0:21'},
+ {k:'bathroom',t:'Bathroom Rebuild',c:'ba',d:'0:44'},
+ {k:'workshop',t:'Workshop Build',c:'ch',d:'0:33'},
+ {k:'build',t:'Empty Lot → Home',c:'bu',d:'0:43'},
+ {k:'patio',t:'Patio Build',c:'bu',d:'0:58'},
+ {k:'livingroom',t:'Living Room Flip',c:'in',d:'0:42'},
+ {k:'halloween',t:'Halloween House',c:'in',d:'0:30'},
+ {k:'nyc',t:'Midtown',c:'ch',d:'0:07'},
+ {k:'loft',t:'Before → After Loft',c:'ba',d:'0:24'},
+ {k:'garden',t:'Garden Path',c:'bu',d:'0:55'},
+ {k:'backyard',t:'Backyard Makeover',c:'bu',d:'1:00'},
+ {k:'cabin',t:'Cabin Interiors',c:'in',d:'0:10'},
+ {k:'oldmoney',t:'Old Money',c:'ch',d:'0:13',w:1},
+ {k:'stool',t:'Woodshop Stool',c:'bu',d:'0:31'},
+ {k:'villa',t:'Villa Orbit',c:'in',d:'0:10'},
+ {k:'china',t:'Temple Rooms',c:'in',d:'0:10'}
+];
+const strip=$('#strip');let moved=false;
+const vio=new IntersectionObserver(es=>{es.forEach(e=>{const v=e.target.querySelector('video');if(!v)return;if(e.isIntersecting){v.play().catch(()=>{})}else v.pause()})},{threshold:.35});
+function buildStrip(){
+  strip.innerHTML='';
+  WORK.forEach(w=>{const b=document.createElement('button');b.type='button';b.className='clip'+(w.w?' w16':'');
+    b.innerHTML='<video src="v/'+w.k+'.mp4" poster="p/'+w.k+'.jpg" muted loop playsinline preload="none"></video><span class="sh"></span><span class="tg mono"><i></i>'+L()[w.c]+' · '+w.d+'</span><span class="cp"><b>'+w.t+'</b><span>▶</span></span>';
+    b.addEventListener('click',()=>{if(moved)return;openVP(w,b.querySelector('.tg').textContent)});
+    b.addEventListener('pointerenter',()=>cur.classList.add('big'));b.addEventListener('pointerleave',()=>cur.classList.remove('big'));
+    strip.appendChild(b);vio.observe(b)});
+}
+let down=false,sx=0,sl=0;
+strip.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;down=true;moved=false;sx=e.clientX;sl=strip.scrollLeft});
+addEventListener('pointermove',e=>{if(!down)return;const dx=e.clientX-sx;if(Math.abs(dx)>6){moved=true;strip.classList.add('drag')}strip.scrollLeft=sl-dx});
+addEventListener('pointerup',()=>{if(!down)return;down=false;strip.classList.remove('drag');setTimeout(()=>{moved=false},0)});
+
+
+/* ---------- AI mini-drama spotlight ---------- */
+const MD=[{k:'md_case',t:'mCaseT',c:'mCase',d:'1:13'},{k:'md_trailer',t:'mTr',c:'mTr',d:'1:25'},{k:'md_ep1',t:'mE1',c:'mE1',d:'1:46'},{k:'md_ep2',t:'mE2',c:'mE2',d:'2:31'},{k:'md_other1',t:'mOt',c:'mEp1',d:'0:49',test:1}];
+const mds=$('#mds');
+function mclip(w,big){const T=L();return '<button class="mclip" type="button" data-k="'+w.k+'"><video muted loop playsinline preload="'+(big?'metadata':'none')+'" poster="p/'+w.k+'.jpg"'+(big?' src="v/'+w.k+'.mp4"':'')+'></video><span class="sh"></span>'+(w.test?'<span class="test">'+T.mTest+'</span>':'')+'<span class="tg mono"><i></i>'+T[w.c]+' · '+w.d+'</span><span class="cp"><b>'+T[w.t]+'</b><span class="pl">▶</span></span></button>'}
+function buildMD(){
+  const T=L();
+  mds.innerHTML=mclip(MD[0],true)+'<div><div class="mono eyebrow" style="color:var(--acc)"><span>'+T.mEy+'</span></div><h3>'+T.mH+'</h3><p class="mp">'+T.mP+'</p><div class="mstats"><div><b>55<em>s</em></b><span>'+T.ms1+'</span></div><div><b>7</b><span>'+T.ms2+'</span></div><div><b>4:17</b><span>'+T.ms3+'</span></div></div><div class="mrow">'+MD.slice(1).map(w=>mclip(w,false)).join('')+'</div></div>';
+  $$('#mds .mclip').forEach(b=>{const w=MD.find(x=>x.k===b.dataset.k),v=b.querySelector('video');
+    b.addEventListener('click',()=>openVP({k:w.k,t:L()[w.t]},b.querySelector('.tg').textContent));
+    b.addEventListener('pointerenter',()=>{cur.classList.add('big');if(!v.src)v.src='v/'+w.k+'.mp4';v.play().catch(()=>{})});
+    b.addEventListener('pointerleave',()=>{cur.classList.remove('big');if(b.parentElement.classList.contains('mrow'))v.pause()});
+    if(b.parentElement===mds)vio.observe(b);});
+}
+
+/* ---------- my top videos + full portfolio toggle ---------- */
+const TOPS=[{k:'film',t:'t1',p:'t1p',c:'top',d:'1:12'},{k:'showreel',t:'t2',p:'t2p',c:'reel',d:'0:44'}];
+const tops=$('#tops'),more=$('#more'),moreb=$('#moreb');let moreOpen=false;
+function buildTops(){const T=L();
+  tops.innerHTML=TOPS.map((w,i)=>'<button class="top" type="button" data-k="'+w.k+'"><span class="fr"><video muted loop playsinline preload="metadata" poster="p/'+w.k+'.jpg" src="v/'+w.k+'.mp4"></video><span class="sh"></span><span class="tg mono"><i></i>'+T[w.c]+' · '+w.d+'</span><span class="pl">▶</span><span class="no">0'+(i+1)+'</span></span><span class="cp"><b>'+T[w.t]+'</b><span>'+T[w.p]+'</span></span></button>').join('');
+  $$('#tops .top').forEach((b,i)=>{const w=TOPS[i];vio.observe(b);
+    b.addEventListener('click',()=>openVP({k:w.k,t:L()[w.t]},b.querySelector('.tg').textContent));
+    b.addEventListener('pointerenter',()=>cur.classList.add('big'));b.addEventListener('pointerleave',()=>cur.classList.remove('big'))});
+  syncMore();
+}
+function syncMore(){const T=L();$('#moret').textContent=moreOpen?T.moreC:T.moreO;$('#morec').textContent=T.moreN(WORK.length);moreb.setAttribute('aria-expanded',String(moreOpen))}
+moreb.addEventListener('click',()=>{moreOpen=!moreOpen;more.classList.toggle('open',moreOpen);syncMore();
+  if(moreOpen){setTimeout(()=>{strip.scrollLeft=0;const r=more.getBoundingClientRect();if(r.top>innerHeight*.6)more.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'})},350)}
+  else{strip.querySelectorAll('video').forEach(v=>v.pause());$('#mine').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}});
+
+/* nav: collapse the link row whenever it does not fit */
+const pill=$('.pill');function fitNav(){pill.classList.remove('compact','tight');if(pill.scrollWidth>pill.clientWidth+1){pill.classList.add('tight');if(pill.scrollWidth>pill.clientWidth+1){pill.classList.remove('tight');pill.classList.add('compact')}}}
+addEventListener('resize',fitNav);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitNav);setTimeout(fitNav,800);
+/* ---------- video player ---------- */
+const vp=$('#vp'),vpv=$('#vpv');let vpFrom=null;
+function openVP(w,cat){vpFrom=document.activeElement;vpv.poster='p/'+w.k+'.jpg';vpv.src='v/'+w.k+'.mp4';$('#vpt').textContent=w.t;$('#vpk').textContent=cat;
+  vp.hidden=false;document.documentElement.style.overflow='hidden';requestAnimationFrame(()=>vp.classList.add('on'));
+  vpv.muted=false;vpv.play().catch(()=>{vpv.muted=true;vpv.play().catch(()=>{})});$('#vpc').focus();cur.classList.remove('big')}
+function closeVP(){if(vp.hidden)return;vp.classList.remove('on');vpv.pause();setTimeout(()=>{vp.hidden=true;vpv.removeAttribute('src');vpv.load();document.documentElement.style.overflow='';if(vpFrom&&vpFrom.focus)vpFrom.focus({preventScroll:true})},reduce?0:350)}
+$('#vpc').addEventListener('click',closeVP);vp.addEventListener('click',e=>{if(e.target===vp)closeVP()});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeVP()});
+
+/* ---------- copy + toast ---------- */
+const toast=$('#toast');
+function say(t){toast.textContent=t;toast.classList.add('show');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('show'),1900)}
+function copyText(txt,el){
+  const sel=()=>{if(el){const r=document.createRange();r.selectNodeContents(el);const x=getSelection();x.removeAllRanges();x.addRange(r)}say(L().sel)};
+  try{navigator.clipboard.writeText(txt).then(()=>say(L().copied+txt),sel)}catch(e){sel()}
+}
+$$('.copy').forEach(b=>b.addEventListener('click',()=>{const el=$('#'+b.dataset.copy);copyText(el.textContent.trim(),el)}));
+$('#orb').addEventListener('click',()=>{copyText('miros987511@gmail.com',$('#mail'));
+  const r=$('#orb').getBoundingClientRect();
+  for(let i=0;i<60;i++){const p=mk(false),a=Math.random()*6.283,f=3+Math.random()*7;p.x=r.left+r.width/2;p.y=r.top+r.height/2;p.vx=Math.cos(a)*f;p.vy=Math.sin(a)*f;p.a=.9;P.push(p)}
+  if(P.length>420)P.splice(0,P.length-420)});
+
+/* ---------- start ---------- */
+size();setLang(LANG);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
